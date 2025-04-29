@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ты - Моя Вселенная ✨❤️</title> <!-- Более сильный Title -->
+    <link href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Caveat:wght@400;700&family=Open+Sans:wght@300;400;600&family=Parisienne&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-start: #0f0c29; /* Глубже синий */
+            --bg-mid: #302b63; /* Фиолетовый оттенок */
+            --bg-end: #24243e; /* Темно-сине-фиолетовый */
+            --text-main: #f0f0f0; /* Очень светлый серый */
+            --accent-color: #ffd700; /* Золотой */
+            --heart-color: #ff6b6b; /* Яркий кораллово-красный */
+            --star-color: #ffffff;
+            --shadow-glow: rgba(255, 215, 0, 0.3); /* Золотое свечение */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            padding: 40px 20px;
+        }
+
+        /* Холст для звезд и эффектов */
+        #stars-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .content-wrapper {
+            background: rgba(26, 26, 46, 0.75); /* Полупрозрачный темный фон, чуть плотнее */
+            padding: 50px 60px;
+            border-radius: 25px;
+            box-shadow: 0 0 40px var(--shadow-glow); /* Усиленное золотое свечение */
+            border: 1px solid rgba(255, 215, 0, 0.2); /* Тонкая золотая рамка */
+            text-align: center;
+            max-width: 750px; /* Чуть шире */
+            width: 90%;
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: zoomInFinal 1.8s 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; /* Плавнее и дольше */
+        }
+
+        @keyframes zoomInFinal {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .final-title {
+            font-family: 'Parisienne', cursive; /* Более элегантный шрифт */
+            font-size: 4rem; /* Крупнее */
+            color: var(--accent-color);
+            margin-bottom: 25px;
+            text-shadow: 0 0 15px var(--shadow-glow);
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: slideInTitle 1.5s 1.5s ease-out forwards;
+        }
+
+        @keyframes slideInTitle {
+             to { opacity: 1; transform: translateY(0); }
+        }
+
+        .final-message {
+            font-family: 'Caveat', cursive;
+            font-size: 2rem; /* Крупнее */
+            line-height: 1.8;
+            margin-bottom: 35px;
+            color: var(--text-main);
+            opacity: 0;
+            animation: fadeInText 2s 2s ease-out forwards; /* Появляется позже */
+        }
+         @keyframes fadeInText {
+             to { opacity: 1; }
+        }
+
+
+        .heart-container {
+             position: relative;
+             display: inline-block; /* Чтобы обертка была по размеру сердца */
+             cursor: pointer; /* Намек на интерактивность */
+        }
+
+        .heart {
+            font-size: 3.5rem; /* Крупнее сердце */
+            color: var(--heart-color);
+            display: block; /* Убрать лишнее пространство */
+            margin-top: 15px;
+            animation: heartbeat 1.5s infinite ease-in-out;
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5); /* Легкое свечение для сердца */
+            opacity: 0;
+            animation: heartbeat 1.5s 3s infinite ease-in-out, fadeInHeart 1s 3s ease-out forwards; /* Добавлено появление */
+        }
+
+         @keyframes fadeInHeart {
+             to { opacity: 1; }
+        }
+
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10%, 30% { transform: scale(0.95); }
+            20%, 40%, 60%, 80% { transform: scale(1.1); }
+            50%, 70% { transform: scale(1.05); }
+        }
+
+        /* Маленькое сообщение при клике на сердце */
+        .heart-message {
+            position: absolute;
+            bottom: 110%; /* Над сердцем */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.6);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none; /* Не мешает клику на сердце */
+        }
+
+        .heart-container:hover .heart-message {
+             opacity: 1;
+        }
+
+
+        .restart-button {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 400;
+            font-size: 0.9rem;
+            padding: 8px 18px;
+            color: var(--text-main);
+            background-color: transparent;
+            border: 1px solid var(--accent-color);
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 50px; /* Больше отступ */
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            animation: fadeInButton 1s 3.5s ease-out forwards; /* Появляется еще позже */
+        }
+
+        @keyframes fadeInButton {
+            to { opacity: 1; }
+        }
+
+        .restart-button:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-start);
+            box-shadow: 0 0 15px var(--shadow-glow);
+        }
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .final-title { font-size: 3rem; }
+            .final-message { font-size: 1.7rem; }
+            .content-wrapper { padding: 40px 30px; }
+            .heart { font-size: 3rem; }
+        }
+         @media (max-width: 480px) {
+            .final-title { font-size: 2.5rem; }
+            .final-message { font-size: 1.5rem; }
+            .content-wrapper { padding: 30px 20px; }
+            .heart { font-size: 2.5rem; }
+            .restart-button { font-size: 0.8rem; padding: 6px 15px; margin-top: 40px;}
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="stars-canvas"></canvas>
+
+    <div class="content-wrapper">
+        <h1 class="final-title">Ты - Моя Вселенная</h1>
+        <p class="final-message">
+            Каждая звезда, каждый лучик света напоминает мне о тебе. Ты делаешь мой мир ярче, теплее и бесконечно прекраснее. <br> Спасибо, что ты есть, мое солнышко.
+        </p>
+        <div class="heart-container">
+             <span class="heart">❤️</span>
+             <span class="heart-message">Нажми на сердце!</span> <!-- Подсказка -->
+        </div>
+
+
+        <a href="index.html" class="restart-button">Начать сначала?</a>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        let shootingStars = [];
+        const numStars = 200; // Больше звезд
+        const twinkleSpeed = 0.03;
+        const shootingStarInterval = 3000; // Интервал появления падающих звезд (ms)
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            shootingStars = []; // Сбросить и падающие звезды
+            createStars();
+        }
+
+        // --- Обычные звезды ---
+        function Star(x, y, radius, alpha) {
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
+            this.initialAlpha = alpha;
+            this.alpha = alpha;
+            this.twinkleDirection = Math.random() > 0.5 ? 1 : -1;
+        }
+
+        Star.prototype.draw = function() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+            ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+            ctx.shadowBlur = 5; // Легкое свечение звезд
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+            ctx.fill();
+            ctx.shadowBlur = 0; // Сбросить свечение для других элементов
+        };
+
+        Star.prototype.update = function() {
+            this.alpha += twinkleSpeed * this.twinkleDirection;
+            if (this.alpha > this.initialAlpha || this.alpha < 0.1) {
+                this.twinkleDirection *= -1;
+                this.alpha = Math.max(0.1, Math.min(this.initialAlpha, this.alpha));
+            }
+            this.draw();
+        };
+
+        function createStars() {
+            for (let i = 0; i < numStars; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const radius = Math.random() * 1.8 + 0.5; // Чуть крупнее
+                const alpha = Math.random() * 0.6 + 0.3; // Ярче
+                stars.push(new Star(x, y, radius, alpha));
+            }
+        }
+
+        // --- Падающие звезды ---
+        function ShootingStar() {
+            this.reset();
+        }
+
+        ShootingStar.prototype.reset = function() {
+            this.x = Math.random() * canvas.width;
+            this.y = 0; // Начинают сверху
+            this.len = Math.random() * 80 + 10; // Длина хвоста
+            this.speed = Math.random() * 5 + 5; // Скорость
+            this.size = Math.random() * 1 + 0.5; // Толщина
+            this.waitTime = new Date().getTime() + Math.random() * 3000 + 500; // Задержка перед стартом
+            this.active = false;
+        };
+
+        ShootingStar.prototype.update = function() {
+            if (this.active) {
+                this.x -= this.speed; // Движение влево-вниз (можно изменить)
+                this.y += this.speed;
+                if (this.x < -this.len || this.y > canvas.height + this.len) {
+                    this.reset(); // Сбросить, когда ушла за экран
+                }
+            } else {
+                if (this.waitTime < new Date().getTime()) {
+                    this.active = true; // Активировать после задержки
+                }
+            }
+        };
+
+        ShootingStar.prototype.draw = function() {
+            if (this.active) {
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x + this.len, this.y - this.len); // Хвост
+                ctx.strokeStyle = `rgba(255, 215, 0, ${Math.random() * 0.5 + 0.5})`; // Золотой цвет с разной яркостью
+                ctx.lineWidth = this.size;
+                ctx.stroke();
+            }
+        };
+
+        function createShootingStars() {
+             // Создаем несколько падающих звезд для одновременного полета
+             if (shootingStars.length < 3) { // Ограничим количество
+                 shootingStars.push(new ShootingStar());
+             }
+        }
+
+
+        // --- Анимация ---
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            stars.forEach(star => star.update());
+            shootingStars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+        }
+
+        // --- Интерактивность сердца ---
+        const heartContainer = document.querySelector('.heart-container');
+        const heartMessage = document.querySelector('.heart-message');
+        let messageRevealed = false;
+
+        heartContainer.addEventListener('click', () => {
+            if (!messageRevealed) {
+                heartMessage.textContent = "Всегда твоё ❤️"; // Новое сообщение
+                heartMessage.style.opacity = '1'; // Показать сразу
+                messageRevealed = true;
+                 // Можно добавить эффект всплеска, как в галерее, если нужно
+            }
+        });
+         // Скрыть сообщение, когда курсор уходит с контейнера, если оно не было раскрыто кликом
+         heartContainer.addEventListener('mouseleave', () => {
+             if (!messageRevealed) {
+                 heartMessage.style.opacity = '0';
+             }
+         });
+
+
+        // Инициализация
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        setInterval(createShootingStars, shootingStarInterval); // Создавать падающие звезды периодически
+        animate();
+
+    </script>
+
+</body>
+</html>

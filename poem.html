@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Несколько строк для тебя...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Caveat:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-start: #e0ffff; /* Light Cyan */
+            --bg-end: #f0fff0; /* Honeydew */
+            --text-main: #2f4f4f; /* Dark Slate Gray */
+            --accent-color: #4682b4; /* Steel Blue */
+            --accent-hover: #5f9ea0; /* Cadet Blue */
+            --poem-color: #008080; /* Teal */
+            --shadow-light: rgba(70, 130, 180, 0.1);
+            --shadow-medium: rgba(70, 130, 180, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(145deg, var(--bg-start) 0%, var(--bg-end) 100%);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-y: auto; /* Allow scroll if poem is long */
+            position: relative;
+            padding: 40px 20px; /* More padding */
+        }
+
+        /* Subtle animated border */
+        body::before {
+            content: '';
+            position: fixed; /* Fixed position */
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            pointer-events: none;
+            z-index: 10;
+            animation: border-pulse 5s infinite ease-in-out;
+        }
+
+        @keyframes border-pulse {
+            0%, 100% { border-color: rgba(70, 130, 180, 0.2); }
+            50% { border-color: rgba(70, 130, 180, 0.5); }
+        }
+
+        .content-wrapper {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 50px 60px;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px var(--shadow-light);
+            max-width: 750px;
+            width: 90%;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 40px; /* Space for button */
+            opacity: 0;
+            animation: zoomIn 1s ease-out forwards;
+        }
+
+         @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .page-title {
+            font-family: 'Caveat', cursive;
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        #poem-container {
+            font-family: 'Marck Script', cursive; /* Script font for poem */
+            font-size: 1.8rem; /* Larger poem font */
+            color: var(--poem-color);
+            line-height: 2.2; /* Generous line height */
+            text-align: center; /* Center align poem */
+            min-height: 300px; /* Ensure space */
+            white-space: pre-wrap; /* Preserve line breaks from JS */
+            perspective: 800px; /* For 3D effect */
+        }
+
+        #poem-container span {
+            display: inline-block; /* Needed for transform */
+            opacity: 0;
+            transform: translateY(20px) rotateX(-45deg);
+            transform-origin: bottom center;
+            transition: opacity 1.2s ease-out, transform 1.2s cubic-bezier(0.19, 1, 0.22, 1); /* Smooth reveal */
+            margin-bottom: 5px; /* Small space below each line */
+        }
+
+        #poem-container span.visible {
+            opacity: 1;
+            transform: translateY(0) rotateX(0deg);
+        }
+
+        .next-button {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 15px 35px;
+            color: white;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            display: none; /* Hidden initially */
+            margin: 30px auto 0; /* Center button below content */
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px var(--shadow-medium);
+            opacity: 0; /* Start hidden for animation */
+        }
+
+        .next-button.visible {
+             display: inline-block;
+             animation: fadeInButton 1s ease-out forwards;
+        }
+
+        @keyframes fadeInButton {
+            to { opacity: 1; }
+        }
+
+
+        .next-button:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 20px var(--shadow-medium);
+        }
+
+         .next-button:active {
+             transform: translateY(-1px) scale(1);
+             box-shadow: 0 5px 15px var(--shadow-medium);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-title { font-size: 2rem; }
+            #poem-container { font-size: 1.5rem; line-height: 2; }
+            .content-wrapper { padding: 40px 30px; }
+            .next-button { padding: 12px 30px; font-size: 1rem; }
+            body::before { top: 5px; left: 5px; right: 5px; bottom: 5px; border-radius: 15px;}
+        }
+         @media (max-width: 480px) {
+            .page-title { font-size: 1.8rem; }
+            #poem-container { font-size: 1.3rem; line-height: 1.9; }
+            .content-wrapper { padding: 30px 20px; }
+            .next-button { padding: 10px 25px; font-size: 0.9rem; }
+             body::before { display: none; } /* Hide border on small screens */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <h2 class="page-title">Несколько строк для тебя...</h2>
+        <div id="poem-container">
+            <!-- Poem lines will be injected here by JavaScript -->
+        </div>
+    </div>
+
+    <a href="gallery.html" class="next-button" id="next-page-button">Дальше... &rarr;</a>
+
+    <script>
+        const poemContainer = document.getElementById('poem-container');
+        const nextButton = document.getElementById('next-page-button');
+
+        const poemLines = [
+            "В твоих глазах — сиянье лета,",
+            "И нежность утренней зари.",
+            "Ты — лучик солнечного света,",
+            "Что греет сердце изнутри.",
+            "",
+            "Твоя улыбка — как награда,",
+            "Как тихий шепот ветерка.",
+            "Ты — та, кто неизменно рядом,",
+            "Пусть далека иль так близка.",
+            "",
+            "Пусть каждый миг твой будет ярок,",
+            "Наполнен счастьем, теплотой.",
+            "Ты — самый лучший мой подарок,",
+            "Мой светлый ангел, ангел мой."
+        ];
+
+        const lineDelay = 800; // Delay between lines appearing (in ms)
+        const initialDelay = 500; // Delay before the first line appears
+
+        function revealPoem(index = 0) {
+            if (index < poemLines.length) {
+                const lineSpan = document.createElement('span');
+                // Add non-breaking space for empty lines to ensure they take up space
+                lineSpan.innerHTML = poemLines[index] === "" ? "&nbsp;" : poemLines[index];
+                poemContainer.appendChild(lineSpan);
+                poemContainer.appendChild(document.createElement('br')); // Add line break
+
+                // Trigger the animation
+                setTimeout(() => {
+                    lineSpan.classList.add('visible');
+                }, 50); // Small delay to allow element rendering
+
+                // Schedule the next line
+                setTimeout(() => {
+                    revealPoem(index + 1);
+                }, lineDelay);
+            } else {
+                // Poem finished, reveal the next button
+                setTimeout(() => {
+                    nextButton.classList.add('visible');
+                }, lineDelay / 2); // Show button shortly after last line
+            }
+        }
+
+        // Start the poem reveal after an initial delay
+        setTimeout(revealPoem, initialDelay);
+
+    </script>
+</body>
+</html>
